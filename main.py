@@ -90,6 +90,19 @@ def lire_fichier(nom_fichier):
         return None
 
 
+def ecrire_fichier(nom_fichier, texte):
+    """
+    Écrit un texte dans un fichier.
+    Paramètres:
+        nom_fichier (str): Le chemin du fichier à écrire.
+        texte (str): Le texte à écrire.
+    """
+    # Ouvre le fichier en mode écriture ('w') avec l'encodage UTF-8
+    with open(nom_fichier, 'w', encoding='utf-8') as fichier:
+        # Écrit le texte dans le fichier
+        fichier.write(texte)
+
+
 txt = tuple(input("Quel mot souhaitez-vous crypter ?"))
 cle_cryptage = int(input("Quel est la clé de cryptage ?"))
 print(encryptage(txt, cle_cryptage))
@@ -101,3 +114,6 @@ print(decryptage(txt, cle_cryptage))
 nom = input("Entrez le chemin du fichier à lire (nom du fichier compris) : ")
 txt = lire_fichier(nom)
 print(txt)
+
+fichier_sortie = input("Entrez le nom du fichier de sortie: ")
+ecrire_fichier(fichier_sortie, txt)
