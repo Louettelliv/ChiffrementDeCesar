@@ -58,6 +58,24 @@ def encryptage(texte, cle):
     return chiffrement_cesar(texte, cle)
 
 
+def decryptage(texte, cle, mots_francais):
+    """
+    Déchiffre un texte en utilisant une clé spécifiée ou en utilisant brute_force si la clé est inconnue.
+    Paramètres:
+        texte (str): Le texte à déchiffrer.
+        cle (int): La clé de déchiffrement (0 si inconnue).
+        mots_francais (set): L'ensemble des mots français.
+    Retour:
+        str: Le texte déchiffré.
+    """
+    # Si la clé est inconnue (0), utiliser la méthode de la force brute pour déchiffrer le texte
+    if cle == 0:
+        return brute_force(texte, mots_francais)
+
+    # Sinon, déchiffrer le texte avec la clé spécifiée
+    return chiffrement_cesar(texte, -cle)
+
+
 def analyse_frequentielle(texte_chiffre):
     """
     Analyse la fréquence des lettres dans un texte chiffré pour deviner la clé de chiffrement. La lettre e étant la plus
@@ -144,21 +162,3 @@ def brute_force(texte_chiffre, mots_francais):
     # Si aucun texte déchiffré n'est en français, afficher un message d'échec
     print("Echec du décryptage sans la clé")
     return None
-
-
-def decryptage(texte, cle, mots_francais):
-    """
-    Déchiffre un texte en utilisant une clé spécifiée ou en utilisant brute_force si la clé est inconnue.
-    Paramètres:
-        texte (str): Le texte à déchiffrer.
-        cle (int): La clé de déchiffrement (0 si inconnue).
-        mots_francais (set): L'ensemble des mots français.
-    Retour:
-        str: Le texte déchiffré.
-    """
-    # Si la clé est inconnue (0), utiliser la méthode de la force brute pour déchiffrer le texte
-    if cle == 0:
-        return brute_force(texte, mots_francais)
-
-    # Sinon, déchiffrer le texte avec la clé spécifiée
-    return chiffrement_cesar(texte, -cle)
