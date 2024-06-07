@@ -5,9 +5,8 @@ Il peut également tenter de déchiffrer des textes sans clé en utilisant une a
 par essai-erreur en vérifiant le pourcentage de mots appartenant aux mots français les plus fréquents.
 
 Auteurs : Lou-Anne Villette, Thomas Chambeyron
-Date : 22/05/2024
+Date : 25/05/2024
 """
-
 
 import string
 
@@ -72,6 +71,25 @@ def decryptage(texte, cle):
     return chiffrement_cesar(texte, -cle)
 
 
+def lire_fichier(nom_fichier):
+    """
+    Lit le contenu d'un fichier texte.
+    Paramètre:
+        nom_fichier (str): Le chemin du fichier à lire.
+    Retour:
+        str: Le contenu du fichier ou None si le fichier est introuvable.
+    """
+    try:
+        # Ouvre le fichier en mode lecture ('r') avec l'encodage UTF-8
+        with open(nom_fichier, 'r', encoding='utf-8') as fichier:
+            # Lit le contenu du fichier et le retourne
+            return fichier.read()
+    except FileNotFoundError:
+        # Si le fichier n'est pas trouvé, affiche un message d'erreur et retourne None
+        print(f"Erreur : fichier '{nom_fichier}' non trouvé.")
+        return None
+
+
 txt = tuple(input("Quel mot souhaitez-vous crypter ?"))
 cle_cryptage = int(input("Quel est la clé de cryptage ?"))
 print(encryptage(txt, cle_cryptage))
@@ -79,3 +97,7 @@ print(encryptage(txt, cle_cryptage))
 txt = tuple(input("Quel mot souhaitez-vous décrypter ?"))
 cle_cryptage = int(input("Quel est la clé de cryptage ?"))
 print(decryptage(txt, cle_cryptage))
+
+nom = input("Entrez le chemin du fichier à lire (nom du fichier compris) : ")
+txt = lire_fichier(nom)
+print(txt)
