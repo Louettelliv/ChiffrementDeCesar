@@ -5,7 +5,7 @@ Il peut également tenter de déchiffrer des textes sans clé en utilisant une a
 par essai-erreur en vérifiant le pourcentage de mots appartenant aux mots français les plus fréquents.
 
 Auteurs : Lou-Anne Villette, Thomas Chambeyron
-Date : 22/05/2024
+Date : 25/05/2024
 """
 
 
@@ -93,24 +93,72 @@ def analyse_frequentielle(texte_chiffre):
     return cle
 
 
-def decryptage(texte, cle):
+# Fonction pour vérifier si un mot est français
+def est_francais(texte, mots_francais):
     """
-    Déchiffre un texte en utilisant une clé spécifiée.
+    Vérifie si un texte est en français en comparant les mots avec une liste de mots français.
+    Paramètres:
+        texte (str): Le texte à vérifier.
+        mots_francais (set): L'ensemble des mots français.
+    Retour:
+        bool: True si le texte est en français, False sinon.
+    """
+    # Séparation du texte en mots en minuscules
+    mots = texte.lower().split()
+    # Initialisation du compteur de correspondance
+    correspondance = 0
+
+    # Parcours de chaque mot dans le texte
+    for mot in mots:
+        # Suppression des caractères de ponctuation et vérification de l'appartenance du mot à la liste de mots français
+        if mot.strip(string.punctuation) in mots_francais:
+            # Incrémentation du compteur si le mot est trouvé dans la liste de mots français
+            correspondance += 1
+
+    # Calcul du pourcentage de mots français dans le texte
+    # Renvoie True s'il y a plus de 30% des mots correspondant aux mots français les plus fréquents
+    return correspondance/len(mots) > 0.3
+
+
+def brute_force(texte_chiffre, mots_francais):
+    """
+    Tente de déchiffrer un texte sans clé en utilisant l'analyse fréquentielle et la force brute.
+    Paramètres:
+        texte_chiffre (str): Le texte chiffré.
+        mots_francais (set): L'ensemble des mots français.
+    Retour:
+        str: Le texte déchiffré ou None si le déchiffrement échoue.
+    """
+    # Déchiffrement du texte avec la clé obtenue à partir de l'analyse fréquentielle
+    texte_dechiffre = chiffrement_cesar(texte_chiffre, analyse_frequentielle(texte_chiffre))
+    # Vérification si le texte déchiffré est en français
+    if est_francais(texte_dechiffre, mots_francais):
+        return texte_dechiffre
+    else:
+        # Si le texte déchiffré n'est pas en français, essayer toutes les clés possibles avec la force brute
+        for cle in range(1, 26):
+            texte_dechiffre = chiffrement_cesar(texte_chiffre, -cle)
+            # Vérification si le texte déchiffré avec la clé actuelle est en français
+            if est_francais(texte_dechiffre, mots_francais):
+                return texte_dechiffre
+    # Si aucun texte déchiffré n'est en français, afficher un message d'échec
+    print("Echec du décryptage sans la clé")
+    return None
+
+
+def decryptage(texte, cle, mots_francais):
+    """
+    Déchiffre un texte en utilisant une clé spécifiée ou en utilisant brute_force si la clé est inconnue.
     Paramètres:
         texte (str): Le texte à déchiffrer.
-        cle (int): La clé de déchiffrement.
+        cle (int): La clé de déchiffrement (0 si inconnue).
+        mots_francais (set): L'ensemble des mots français.
     Retour:
         str: Le texte déchiffré.
     """
+    # Si la clé est inconnue (0), utiliser la méthode de la force brute pour déchiffrer le texte
+    if cle == 0:
+        return brute_force(texte, mots_francais)
 
     # Sinon, déchiffrer le texte avec la clé spécifiée
     return chiffrement_cesar(texte, -cle)
-
-
-txt = tuple(input("Quel mot souhaitez-vous crypter ?"))
-cle_cryptage = int(input("Quel est la clé de cryptage ?"))
-print(encryptage(txt, cle_cryptage))
-
-txt = tuple(input("Quel mot souhaitez-vous décrypter ?"))
-cle_cryptage = int(input("Quel est la clé de cryptage ?"))
-print(decryptage(txt, cle_cryptage))
