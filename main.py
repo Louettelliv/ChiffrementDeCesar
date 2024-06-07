@@ -236,3 +236,92 @@ def charger_mots_francais():
         print(f"Erreur : fichier 'Fre.Freq.3.Hun.txt' non trouvé.")
 
     return mots_francais
+
+
+def validate_input(demand, input_type=int):
+    """
+    Valide les entrées utilisateur en vérifiant si elles sont de type entier
+
+    Arguments:
+        demand (str): Message demandant à l'utilisateur de saisir une valeur.
+        input_type (type, optionnel): Type de données attendu (par défaut int).
+
+    Retour:
+        user_type: Entrée utilisateur validée.
+    """
+    # Boucle jusqu'à ce qu'une entrée valide soit saisie
+    while True:
+        try:
+            # Demande à l'utilisateur de saisir une valeur et convertit en input_type (par défaut int)
+            user_input = input_type(input(demand))
+            return user_input  # Retourne l'entrée utilisateur validée
+        except ValueError:
+            # Affiche un message d'erreur en cas de saisie incorrecte
+            print("Erreur : La cle entrée doit être un entier.")
+
+
+def main():
+    """
+    Fonction principale du programme.
+    Affiche un menu interactif pour chiffrer et déchiffrer des textes ou des fichiers.
+    """
+    # Chargement des mots français pour la validation
+    mots_francais = charger_mots_francais()
+
+    while True:
+        # Affichage du menu principal
+        print("\nProgramme de chiffrement César")
+        print("1. Encrypter un texte")
+        print("2. Décrypter un texte")
+        print("3. Encrypter un fichier texte")
+        print("4. Décrypter un fichier texte")
+        print("5. Quitter")
+        choix = input("\nChoisissez une option : ")
+
+        if choix == '1':
+            # Option pour encrypter un texte saisi par l'utilisateur
+            texte = input("Entrez le texte à encrypter : \n")
+            cle = validate_input("Entrez la clé : ") % 26
+            texte_encrypte = encryptage(enlever_diacritiques(texte), cle)
+            print(f"\nTexte encrypté : \n{texte_encrypte}")
+
+        elif choix == '2':
+            # Option pour décrypter un texte saisi par l'utilisateur
+            texte = input("Entrez le texte à décrypter : \n")
+            cle = validate_input("Entrez la clé. Entrez 0 si vous ne la connaissez pas : ") % 26
+            texte_decrypte = decryptage(enlever_diacritiques(texte), cle, mots_francais)
+            print(f"\nTexte décrypté : \n{texte_decrypte}")
+
+        elif choix == '3':
+            # Option pour encrypter un fichier texte
+            nom_fichier = input("Entrez le chemin du fichier à encrypter (nom du fichier compris) : ")
+            texte = lire_fichier(nom_fichier)
+            if texte:
+                cle = validate_input("Entrez la clé : ") % 26
+                texte_encrypte = encryptage(enlever_diacritiques(texte), cle)
+                fichier_sortie = input("Entrez le nom du fichier de sortie: ")
+                ecrire_fichier(fichier_sortie, texte_encrypte)
+                print(f"\nTexte encrypté écrit dans le fichier {fichier_sortie}")
+
+        elif choix == '4':
+            # Option pour décrypter un fichier texte
+            nom_fichier = input("Entrez le chemin du fichier à décrypter (nom du fichier compris) : ")
+            texte = lire_fichier(nom_fichier)
+            if texte:
+                cle = validate_input("Entrez la clé. Entrez 0 si vous ne la connaissez pas : ") % 26
+                texte_decrypte = decryptage(enlever_diacritiques(texte), cle, mots_francais)
+                fichier_sortie = input("Entrez le nom du fichier de sortie: ")
+                ecrire_fichier(fichier_sortie, texte_decrypte)
+                print(f"\nTexte décrypté écrit dans le fichier {fichier_sortie}")
+
+        elif choix == '5':
+            # Option pour quitter le programme
+            break
+
+        else:
+            # Gestion des choix invalides
+            print("Choix invalide. Veuillez réessayer.")
+
+
+if __name__ == "__main__":
+    main()
