@@ -2,12 +2,13 @@
 Programme de chiffrement et de déchiffrement utilisant le code de César en Python.
 Ce programme permet de chiffrer et déchiffrer des textes ou des fichiers texte en utilisant une clé spécifiée.
 Il peut également tenter de déchiffrer des textes sans clé en utilisant une analyse fréquentielle des caractères ou
-par essai-erreur en vérifiant le pourcentage de mots appartenant aux mots français les plus fréquents.
+par essai-erreur en vérifiant le pourcentage de mots appartenant aux mots français les plus fréquents selon Lexique.org.
 
 Auteurs : Lou-Anne Villette, Thomas Chambeyron
-Date : 25/05/2024
+Date : 05/06/2024
 """
 
+from unicodedata import normalize
 import string
 
 
@@ -193,3 +194,45 @@ def ecrire_fichier(nom_fichier, texte):
     with open(nom_fichier, 'w', encoding='utf-8') as fichier:
         # Écrit le texte dans le fichier
         fichier.write(texte)
+
+
+def enlever_diacritiques(texte):
+    """
+    Supprime les signes diacritiques d'un texte donné.
+    Paramètre:
+        texte (str): Le texte dont les signes diacritiques doivent être supprimés.
+    Retour:
+        str: Le texte sans signes diacritiques.
+    """
+
+    # Utilise la normalisation Unicode pour décomposer les caractères diacritiques
+    # Encode ensuite en ASCII pour supprimer les caractères non-ASCII
+    # Décode à nouveau en UTF-8 pour obtenir une chaîne de caractères sans signes diacritiques
+    return normalize('NFKD', texte).encode('ASCII', 'ignore').decode('utf8')
+
+
+def charger_mots_francais():
+    """
+    Charge une liste de mots français à partir d'un fichier texte.
+    Retour:
+        set: Ensemble de mots français parmi les plus fréquents, sans signes diacritiques.
+    """
+    # Initialiser un ensemble pour stocker les mots
+    mots_francais = set()
+    # Ouvrir le fichier
+    try:
+        with open('Fre.Freq.3.Hun.txt', 'r', encoding='utf-8') as file:
+            # Lire le contenu du fichier
+            contenu = file.readlines()[1:]
+
+        # Parcourir chaque ligne du contenu
+        for ligne in contenu:
+            # Diviser la ligne en mots (séparés par des espaces)
+            mots_ligne = ligne.split()
+            # Ajouter chaque mot à la liste de mots
+            mots_francais.add(enlever_diacritiques(mots_ligne[0]))
+
+    except FileNotFoundError:
+        print(f"Erreur : fichier 'Fre.Freq.3.Hun.txt' non trouvé.")
+
+    return mots_francais
