@@ -193,4 +193,3 @@ def ecrire_fichier(nom_fichier, texte):
     with open(nom_fichier, 'w', encoding='utf-8') as fichier:
         # Écrit le texte dans le fichier
         fichier.write(texte)
-
