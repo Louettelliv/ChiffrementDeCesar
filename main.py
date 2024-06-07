@@ -58,6 +58,41 @@ def encryptage(texte, cle):
     return chiffrement_cesar(texte, cle)
 
 
+def analyse_frequentielle(texte_chiffre):
+    """
+    Analyse la fréquence des lettres dans un texte chiffré pour deviner la clé de chiffrement. La lettre e étant la plus
+    fréquente dans la langue française, on suppose donc que la lettre la plus fréquente dans le texte correspond à "e".
+    Paramètres:
+        texte_chiffre (str): Le texte chiffré.
+    Retours:
+        int: La clé estimée.
+    """
+    # Définition de l'alphabet
+    alphabet = string.ascii_lowercase
+    # Initialisation d'une liste pour compter l'occurrence de chaque lettre de l'alphabet
+    occurrence = [0]*26
+
+    # Parcours du texte chiffré
+    for char in texte_chiffre:
+        # Vérification si le caractère est une lettre minuscule
+        if char.islower():
+            # Incrémentation du compteur pour la lettre correspondante dans l'alphabet
+            occurrence[alphabet.find(char.lower())] += 1
+
+    # Recherche de la lettre la plus fréquente dans le texte chiffré
+    max_occurrence = occurrence[0]
+    index_max = 0
+    for i in range(len(occurrence)):
+        if max_occurrence < occurrence[i]:
+            max_occurrence = occurrence[i]
+            index_max = i
+
+    # Calcul de la clé estimée en comparant la lettre la plus fréquente avec 'e'
+    cle = (index_max - alphabet.find('e')) % 26
+
+    return cle
+
+
 def decryptage(texte, cle):
     """
     Déchiffre un texte en utilisant une clé spécifiée.
